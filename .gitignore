@@ -1,0 +1,16 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/flt
+fltlog.db
+flt.so
+flt.dylib
+flt.dll
+flt.a
+flt.lib
+flt-test-*
+*.exe
+*.o
+*.obj
+*.lst

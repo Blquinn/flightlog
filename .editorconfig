@@ -1,0 +1,14 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+dfmt_brace_style = otbs
+
+# Matches multiple files with brace expansion notation
+# Set default charset
+[*.d]
+charset = utf-8
+indent_style = tab

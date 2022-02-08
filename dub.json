@@ -1,0 +1,12 @@
+{
+	"authors": [
+		"Ben"
+	],
+	"copyright": "Copyright © 2022, Ben",
+	"dependencies": {
+		"d2sqlite3": "~>1.0.0"
+	},
+	"description": "A minimal D application.",
+	"license": "proprietary",
+	"name": "flt"
+}
