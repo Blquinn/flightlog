@@ -29,17 +29,22 @@ void editLog(Database* db, string[] args) {
         exit(1);
     }
 
-    auto stmt = db.prepare("select id, timestamp, msg from log where date like ? || '%' order by timestamp;");
-    stmt.bindAll(date.toISOExtString());
+    auto bounds = boundsForDate(date);
+
+    auto stmt = db.prepare(
+        "select id, timestamp, msg 
+from log 
+where timestamp >= ? and timestamp < ?
+order by timestamp;");
+
+    stmt.bindAll(bounds[0], bounds[1]);
     auto results = stmt.execute();
 
     int logPk;
     string msg;
     SysTime timestamp;
     int i = 1;
-    foreach (row; results) 
-    {
-        writeln(row);
+    foreach (row; results) {
         if (i == logId) {
             logPk = row["id"].as!int;
             msg = row["msg"].as!string;
@@ -55,7 +60,8 @@ void editLog(Database* db, string[] args) {
         exit(1);
     }
 
-    writefln("Editing message %s - %d - \"%s\"", sysTimeToDate(timestamp).toISOExtString(), logId, msg);
+    writefln("Editing message %s - %d - \"%s\"", sysTimeToDate(timestamp)
+            .toISOExtString(), logId, msg);
     write("> ");
     auto newMsg = readln().stripRight();
 

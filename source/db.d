@@ -1,6 +1,5 @@
 module db;
 
-
 import std.range;
 import std.algorithm.iteration;
 import std.algorithm.searching;
@@ -19,9 +18,9 @@ struct DayCount {
 }
 
 DayCount[] getCountsByDate(Database* db) {
-    auto results = db.execute(" select date from log order by timestamp; ");
+    auto results = db.execute(" select timestamp from log order by timestamp; ");
 
-    auto arr = results.map!(row => (cast(DateTime) SysTime.fromISOExtString(row[0].as!string)
+    auto arr = results.map!(row => (cast(DateTime) SysTime.fromUnixTime(row[0].as!long)
             .toLocalTime()).date())
         .group
         .map!(rec => DayCount(rec[0], rec[1]))
@@ -37,12 +36,12 @@ DayCount[] getCountsByDate(Database* db) {
 }
 
 Date dateFromDayId(Database* db, int dayId) {
-	auto counts = getCountsByDate(db);
-	auto dayCounts = counts.find!(c => c.dayId == dayId);
-	if (dayCounts.empty) {
-		writefln("Day id %d does not exist. (You can use <hist> to find valid day ids.)", dayId);
-		exit(5);
-	}
+    auto counts = getCountsByDate(db);
+    auto dayCounts = counts.find!(c => c.dayId == dayId);
+    if (dayCounts.empty) {
+        writefln("Day id %d does not exist. (You can use <hist> to find valid day ids.)", dayId);
+        exit(5);
+    }
 
-	return dayCounts[0].date;
+    return dayCounts[0].date;
 }

@@ -35,16 +35,18 @@ Date parseDate(Database* db, string arg) {
 
 void listLogs(Database* db, string[] args) {
 	Date date;
-	if (args.empty)
-		date = sysTimeToDate(Clock.currTime());
-	else
+	if (args.empty) {
+		auto results = db.execute("select timestamp from log order by timestamp desc limit 1;");
+		date = results.empty ?
+			sysTimeToDate(Clock.currTime())
+			: unixToDate(results.front()[0].as!int);
+	} else {
 		date = parseDate(db, args[0]);
+	}
 
-	writeln("Logs for ", date.toISOExtString());
-	writeln();
-
-	auto stmt = db.prepare("select msg from log where date like ? || '%'");
-	stmt.bindAll(date.toISOExtString());
+	auto stmt = db.prepare("select msg from log where timestamp >= ? and timestamp < ?");
+	auto bounds = boundsForDate(date);
+	stmt.bindAll(bounds[0], bounds[1]);
 	auto results = stmt.execute();
 
 	bool hasResults = false;

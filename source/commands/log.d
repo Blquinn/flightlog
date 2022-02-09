@@ -10,6 +10,7 @@ import d2sqlite3;
 void addLog(Database* db, string[] args) {
 	string msg;
 	if (args.empty) {
+		writeln("Enter a message");
 		write("> ");
 		msg = readln().stripRight();
 	} else {
@@ -17,13 +18,7 @@ void addLog(Database* db, string[] args) {
 	}
 
 	auto now = Clock.currTime();
-	auto stmt = db.prepare("insert into log (msg, timestamp, date) values (?, ?, ?);");
-	stmt.bindAll(msg, now.toUnixTime(), now.toUTC().toISOExtString());
+	auto stmt = db.prepare("insert into log (msg, timestamp) values (?, ?);");
+	stmt.bindAll(msg, now.toUnixTime());
 	stmt.execute();
-	// db.execute("SELECT last_insert_rowid()");
-	// foreach (row; results)
-	// {
-	// 	auto id = row[0].as!int;
-	// 	writeln("Inserted new row ", id);
-	// }
 }
